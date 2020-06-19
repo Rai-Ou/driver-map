@@ -42,13 +42,14 @@ export default {
                         "https://a.amap.com/jsapi_demos/static/images/mass1.png",
                     anchor: new AMap.Pixel(8, 8),
                     size: new AMap.Size(14, 14)
-                },
-                {
-                    url:
-                        "https://a.amap.com/jsapi_demos/static/images/mass2.png",
-                    anchor: new AMap.Pixel(6, 6),
-                    size: new AMap.Size(10, 10)
                 }
+                // ,
+                // {
+                //     url:
+                //         "https://a.amap.com/jsapi_demos/static/images/mass2.png",
+                //     anchor: new AMap.Pixel(6, 6),
+                //     size: new AMap.Size(10, 10)
+                // }
             ]
         };
     },
@@ -77,13 +78,13 @@ export default {
         },
         getData() {
             getDriverPosition().then(res => {
-                console.log(res);
                 this.driver = res.data;
                 this.driver.forEach(element => {
                     element.lnglat = [element.lng, element.lat];
-                    element.style = element.is_driving;
+                    element.style = element.is_driving == 0 ? 0 : 1;
+                    element.workType =
+                        element.work_status == 0 ? "上班" : "下班";
                 });
-                console.log(this.driver);
                 var marker = new AMap.Marker({ content: " ", map: this.map });
                 var mass = new AMap.MassMarks(this.driver, {
                     opacity: 0.8,
@@ -92,10 +93,9 @@ export default {
                     style: this.style
                 });
                 mass.on("mouseover", function(e) {
-                    console.log(e);
                     marker.setPosition(e.data.lnglat);
                     marker.setLabel({
-                        content: `${e.data.real_name}:${e.data.work_phone}`
+                        content: `${e.data.real_name}:${e.data.work_phone}【${e.data.workType}】`
                     });
                 });
 
